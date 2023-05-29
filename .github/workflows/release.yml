@@ -1,5 +1,8 @@
 name: Release
-on:
+on: 
+  repository_dispatch:
+  workflow_dispatch:
+
   create:
     tags:
       - v*
