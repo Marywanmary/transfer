@@ -1,4 +1,7 @@
-on: [push, pull_request]
+on: 
+  repository_dispatch:
+  workflow_dispatch:
+
 name: test
 jobs:
   test:
