@@ -1,0 +1,37 @@
+on: [push, pull_request]
+name: test
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: install
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.18.x
+
+      - name: checkout
+        uses: actions/checkout@v1
+
+      - name: build
+        run: |
+          GOOS=linux GOARCH=amd64 go build -ldflags '-s -w -extldflags "-static"' -o ci-test-linux-amd64
+          chmod +x ./ci-test-linux-amd64
+
+      - name: test - default
+        run: |
+          ./ci-test-linux-amd64 --no-progress -o test -f $(./ci-test-linux-amd64 cat --silent go.sum)
+          cmp test go.sum
+
+      - name: test - multi
+        run: |
+          ./ci-test-linux-amd64 wet --no-progress crypto
+          ./ci-test-linux-amd64 wet --no-progress -s crypto
+
+      - name: test - all
+        run: |
+          ./ci-test-linux-amd64 arp --no-progress go.sum
+          ./ci-test-linux-amd64 0x0 --no-progress go.sum
+          ./ci-test-linux-amd64 lit --no-progress go.sum
+          ./ci-test-linux-amd64 gof --no-progress go.sum
+          ./ci-test-linux-amd64 vim --no-progress go.sum
+          ./ci-test-linux-amd64 wet --no-progress go.sum
